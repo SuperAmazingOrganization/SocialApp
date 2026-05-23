@@ -1,0 +1,72 @@
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CardActions from "@mui/material/CardActions";
+import Card from "@mui/material/Card";
+import Button from "@mui/material/Button";
+import {Stack, TextField} from "@mui/material";
+import {useState} from "react";
+import Grid from "@mui/material/Grid";
+import FormLabel from '@mui/material/FormLabel';
+import {useDispatch} from "react-redux";
+import {getToken} from "./api.js";
+import {setUser} from "./store/userSlice.js";
+
+export default function LoginPage() {
+    const dispatch = useDispatch()
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+
+    async function login() {
+        const response = await getToken(username, password)
+        dispatch(setUser({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            username: username
+        }))
+        localStorage.setItem('accessToken', response.accessToken)
+    }
+
+    return (
+        <Grid container style={{paddingTop: '200px'}}>
+            <Grid item xs={12} sx={{margin: 'auto'}}>
+                <Card sx={{ minWidth: 500, maxWidth: 600, padding: '24px' }}>
+                    <CardContent style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
+                            <FormLabel>Email or username</FormLabel>
+                            <TextField
+                                id="username"
+                                rows={4}
+                                placeholder="name@domain.xd"
+                                onInput={(e) => setUsername(e.target.value)}
+                                value={username}
+                                fullWidth
+                            />
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
+                            <FormLabel>Password</FormLabel>
+                            <TextField
+                                id="password"
+                                rows={4}
+                                type="password"
+                                placeholder="********"
+                                onInput={(e) => setPassword(e.target.value)}
+                                value={password}
+                                fullWidth
+                            />
+                        </div>
+                    </CardContent>
+                    <CardActions sx={{justifyContent: 'center'}}>
+                        <Button
+                            variant="contained"
+                            size="small"
+                            onClick={() => login()}
+                        >Login</Button>
+                    </CardActions>
+                    <Typography variant="body2" color="text.secondary" align="center">
+                        New user? <a href="/register">Create an account!</a>
+                    </Typography>
+                </Card>
+            </Grid>
+        </Grid>
+    )
+}
