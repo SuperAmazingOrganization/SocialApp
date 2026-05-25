@@ -19,6 +19,7 @@ export default function Feed({ onOpenProfile, onOpenUserProfile }) {
     const sentinelRef = useRef(null)
 
     const enrichPosts = async (posts) => {
+        if (!Array.isArray(posts)) return [];
         const enriched = [];
         for (const post of posts) {
             let likes = [];
