@@ -64,8 +64,8 @@ export default function RegisterPage() {
             setError('');
             await registerUser({ email, username, password });
             navigate('/login');
-        } catch (err) {
-            setError('Registration failed. Please try again.');
+        } catch (e) {
+            setError(e?.exceptions?.[0]?.message || e?.message || 'Coś poszło nie tak');
         }
     }
 

@@ -91,8 +91,8 @@ export default function LoginPage() {
             const user = await getCurrentUser();
             dispatch(setCurrentUser(user));
             navigate('/');
-        } catch (err) {
-            setError('Invalid credentials');
+        } catch (e) {
+            setError(e?.exceptions?.[0]?.message || e?.message || 'Nieprawidłowy login lub hasło');
         }
     }
 
