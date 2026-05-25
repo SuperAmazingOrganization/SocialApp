@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
-import {TextField} from "@mui/material";
+import {TextField, Alert} from "@mui/material";
 import {useState} from "react";
 import Grid from "@mui/material/Grid";
 import FormLabel from '@mui/material/FormLabel';
@@ -17,10 +17,12 @@ export default function LoginPage() {
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
 
     async function login() {
-        const response = await getToken(username, password)
-        if (response.accessToken) {
+        setError('')
+        try {
+            const response = await getToken(username, password)
             localStorage.setItem('accessToken', response.accessToken)
             const user = await getCurrentUser()
             dispatch(setUser({
@@ -29,6 +31,8 @@ export default function LoginPage() {
                 username: user.username
             }))
             navigate('/')
+        } catch (e) {
+            setError(e?.message || e?.title || 'Invalid credentials')
         }
     }
 
@@ -37,6 +41,7 @@ export default function LoginPage() {
             <Grid item xs={12} sx={{margin: 'auto'}}>
                 <Card sx={{ minWidth: 500, maxWidth: 600, padding: '24px' }}>
                     <CardContent style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                        {error && <Alert severity="error">{error}</Alert>}
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
                             <FormLabel>Email or username</FormLabel>
                             <TextField

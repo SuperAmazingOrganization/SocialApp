@@ -70,16 +70,24 @@ export async function getToken(username, password) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: username, password })
     })
-    return await response.json()
+    const data = await response.json()
+    if (!response.ok) {
+        throw data
+    }
+    return data
 }
 
-export async function registerUser(username, email, phone, password) {
+export async function registerUser({username, email, password}) {
     const response = await fetch(`${BASE}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, phone, password })
+        body: JSON.stringify({ username, email, password })
     })
-    return await response.json()
+    const data = await response.json()
+    if (!response.ok) {
+        throw data
+    }
+    return data
 }
 
 export async function getCurrentUser() {

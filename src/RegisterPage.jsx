@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
-import {TextField} from "@mui/material";
+import {TextField, Alert} from "@mui/material";
 import {useState} from "react";
 import Grid from "@mui/material/Grid";
 import FormLabel from '@mui/material/FormLabel';
@@ -14,12 +14,17 @@ export default function RegisterPage() {
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
-    const [phone, setPhone] = useState('')
     const [password, setPassword] = useState('')
+    const [error, setError] = useState('')
 
     async function register() {
-        await registerUser(username, email, phone, password)
-        navigate('/login')
+        setError('')
+        try {
+            await registerUser({username, email, password})
+            navigate('/login')
+        } catch (e) {
+            setError(e?.message || e?.title || 'Something went wrong')
+        }
     }
 
     return (
@@ -27,6 +32,7 @@ export default function RegisterPage() {
             <Grid item xs={12} sx={{margin: 'auto'}}>
                 <Card sx={{ minWidth: 500, maxWidth: 600, padding: '24px' }}>
                     <CardContent style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
+                        {error && <Alert severity="error">{error}</Alert>}
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
                             <FormLabel>Username</FormLabel>
                             <TextField
@@ -43,15 +49,6 @@ export default function RegisterPage() {
                                 placeholder="name@domain.xd"
                                 onInput={(e) => setEmail(e.target.value)}
                                 value={email}
-                                fullWidth
-                            />
-                        </div>
-                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
-                            <FormLabel>Phone</FormLabel>
-                            <TextField
-                                placeholder="+48123456789"
-                                onInput={(e) => setPhone(e.target.value)}
-                                value={phone}
                                 fullWidth
                             />
                         </div>
