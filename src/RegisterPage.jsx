@@ -23,7 +23,7 @@ export default function RegisterPage() {
             await registerUser({username, email, password})
             navigate('/login')
         } catch (e) {
-            setError(e?.message || e?.title || 'Something went wrong')
+            setError(e?.exceptions?.[0]?.message || e?.message || 'Coś poszło nie tak')
         }
     }
 

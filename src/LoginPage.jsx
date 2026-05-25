@@ -32,7 +32,7 @@ export default function LoginPage() {
             }))
             navigate('/')
         } catch (e) {
-            setError(e?.message || e?.title || 'Invalid credentials')
+            setError(e?.exceptions?.[0]?.message || e?.message || 'Nieprawidłowy login lub hasło')
         }
     }
 
