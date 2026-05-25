@@ -17,15 +17,17 @@ export default function Feed() {
 
     const sentinelRef = useRef(null)
 
+    function enrichPosts(posts) {
+        if (!Array.isArray(posts)) return []
+        return posts.map((p) => ({...p, likes: []}))
+    }
+
     // Initial load
     useEffect(() => {
         const load = async () => {
             dispatch(setLoading(true))
             let data = await getAllPosts(0, PAGE_SIZE)
-            for (let i = 0; i < data.length; i++) {
-                const likes = await getPostLikes(data[i].id)
-                data[i] = {...data[i], likes}
-            }
+            data = enrichPosts(data)
             dispatch(loadAll(data))
             if (data.length < PAGE_SIZE) {
                 dispatch(setHasMore(false))
@@ -40,10 +42,7 @@ export default function Feed() {
         dispatch(setLoading(true))
         const nextPage = page + 1
         let data = await getAllPosts(nextPage, PAGE_SIZE)
-        for (let i = 0; i < data.length; i++) {
-            const likes = await getPostLikes(data[i].id)
-            data[i] = {...data[i], likes}
-        }
+        data = enrichPosts(data)
         if (data.length > 0) {
             const existingIds = new Set(tweets.map((t) => t.id))
             const allDuplicates = data.every((t) => existingIds.has(t.id))
