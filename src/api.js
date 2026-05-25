@@ -14,8 +14,24 @@ export async function getToken(identifier, password) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password })
     });
-    if (!response.ok) throw new Error('Login failed');
-    return await response.json();
+    const data = await response.json();
+    if (!response.ok) {
+        throw data;
+    }
+    return data;
+}
+
+export async function registerUser({ email, username, password }) {
+    const response = await fetch(`${BASE_URL}/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, username, password })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw data;
+    }
+    return data;
 }
 
 export async function getCurrentUser() {
