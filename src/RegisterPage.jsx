@@ -7,29 +7,19 @@ import {TextField} from "@mui/material";
 import {useState} from "react";
 import Grid from "@mui/material/Grid";
 import FormLabel from '@mui/material/FormLabel';
-import {useDispatch} from "react-redux";
-import {getToken, getCurrentUser} from "./api.js";
-import {setUser} from "./store/userSlice.js";
 import {useNavigate} from "react-router";
+import {registerUser} from "./api.js";
 
-export default function LoginPage() {
-    const dispatch = useDispatch()
+export default function RegisterPage() {
     const navigate = useNavigate()
     const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [phone, setPhone] = useState('')
     const [password, setPassword] = useState('')
 
-    async function login() {
-        const response = await getToken(username, password)
-        if (response.accessToken) {
-            localStorage.setItem('accessToken', response.accessToken)
-            const user = await getCurrentUser()
-            dispatch(setUser({
-                accessToken: response.accessToken,
-                refreshToken: response.refreshToken,
-                username: user.username
-            }))
-            navigate('/')
-        }
+    async function register() {
+        await registerUser(username, email, phone, password)
+        navigate('/login')
     }
 
     return (
@@ -38,21 +28,36 @@ export default function LoginPage() {
                 <Card sx={{ minWidth: 500, maxWidth: 600, padding: '24px' }}>
                     <CardContent style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
-                            <FormLabel>Email or username</FormLabel>
+                            <FormLabel>Username</FormLabel>
                             <TextField
-                                id="username"
-                                rows={4}
-                                placeholder="name@domain.xd"
+                                placeholder="john_doe"
                                 onInput={(e) => setUsername(e.target.value)}
                                 value={username}
                                 fullWidth
                             />
                         </div>
                         <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
+                            <FormLabel>Email</FormLabel>
+                            <TextField
+                                type="email"
+                                placeholder="name@domain.xd"
+                                onInput={(e) => setEmail(e.target.value)}
+                                value={email}
+                                fullWidth
+                            />
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
+                            <FormLabel>Phone</FormLabel>
+                            <TextField
+                                placeholder="+48123456789"
+                                onInput={(e) => setPhone(e.target.value)}
+                                value={phone}
+                                fullWidth
+                            />
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px'}}>
                             <FormLabel>Password</FormLabel>
                             <TextField
-                                id="password"
-                                rows={4}
                                 type="password"
                                 placeholder="********"
                                 onInput={(e) => setPassword(e.target.value)}
@@ -65,11 +70,11 @@ export default function LoginPage() {
                         <Button
                             variant="contained"
                             size="small"
-                            onClick={() => login()}
-                        >Login</Button>
+                            onClick={() => register()}
+                        >Register</Button>
                     </CardActions>
                     <Typography variant="body2" color="text.secondary" align="center">
-                        New user? <a href="/register">Create an account!</a>
+                        Already have an account? <a href="/login">Login!</a>
                     </Typography>
                 </Card>
             </Grid>

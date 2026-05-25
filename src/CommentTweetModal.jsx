@@ -5,15 +5,16 @@ import Box from "@mui/material/Box";
 import CloseIcon from '@mui/icons-material/Close';
 import {useState} from "react";
 import {commentPost} from "./api.js";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {commentTweet} from "./store/tweetSlice.js";
 
 export default function CommentTweetModal({tweet}) {
     const dispatch = useDispatch()
+    const userId = useSelector((state) => state.user.userId)
     const [text, setText] = useState('')
 
     const sendComment = async () => {
-        const data = await commentPost(tweet.id, 1, text)  // TODO use userId instead of 1
+        const data = await commentPost(tweet.id, userId, text)
         dispatch(commentTweet({id: tweet.id, comment: data}))
     }
 

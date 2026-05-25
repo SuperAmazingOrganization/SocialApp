@@ -7,15 +7,17 @@ import Header from "./Header.jsx";
 import {BrowserRouter, Route, Routes} from "react-router";
 import App from "./App.jsx";
 import LoginPage from "./LoginPage.jsx";
+import RegisterPage from "./RegisterPage.jsx";
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
       <Provider store={store}>
-          <Header />
           <BrowserRouter>
+              <Header />
               <Routes>
                   <Route exact path="/" element={<App/>} />
                   <Route exact path="/login" element={<LoginPage/>} />
+                  <Route exact path="/register" element={<RegisterPage/>} />
               </Routes>
           </BrowserRouter>
       </Provider>

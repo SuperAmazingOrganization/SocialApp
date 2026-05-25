@@ -8,6 +8,7 @@ import {createPost} from "./api.js";
 export default function CreateTweet() {
     const [content, setContent] = useState('')
     const isModalOpen = useSelector((state) => state.tweet.isModalOpen)
+    const userId = useSelector((state) => state.user.userId)
     const dispatch = useDispatch()
 
     return (
@@ -55,7 +56,7 @@ export default function CreateTweet() {
                         variant="contained"
                         onClick={() => createPost({
                             body: content,
-                            authorId: 1
+                            authorId: userId
                         })}
                     >Wyślij</Button>
                 </Stack>

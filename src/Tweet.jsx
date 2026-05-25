@@ -5,16 +5,17 @@ import Typography from '@mui/material/Typography';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 import Comment from '@mui/icons-material/Comment';
 import {likePost, unlikePost} from "./api.js";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {likeTweet, unlikeTweet} from "./store/tweetSlice.js";
 
 export default function Tweet({tweet}) {
     const dispatch = useDispatch()
+    const userId = useSelector((state) => state.user.userId)
 
-    const likeSendByMe = tweet.likes?.find(like => like.id === 1) // TODO use username instead of 1
+    const likeSendByMe = tweet.likes?.find(like => like.userId === userId || like.id === userId)
 
     const sendLikePost = async (id) => {
-        const data = await likePost(id, 1)  // TODO use userId instead of 1
+        const data = await likePost(id, userId)
         dispatch(likeTweet({id, like: data}))
     }
 
