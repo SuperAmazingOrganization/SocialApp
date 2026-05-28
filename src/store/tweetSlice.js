@@ -38,14 +38,16 @@ export const tweetSlice = createSlice({
             const tweet = state.tweets.find(t => t.id === action.payload.id)
             if (tweet) {
                 tweet.likes = tweet.likes || []
-                tweet.likes.push(action.payload.like)
+                // action.payload.user is a UserDTO
+                tweet.likes.push(action.payload.user)
             }
         },
         unlikeTweet: (state, action) => {
             const tweet = state.tweets.find(t => t.id === action.payload.id)
             if (tweet) {
                 tweet.likes = tweet.likes || []
-                tweet.likes = tweet.likes.filter(like => like.id !== action.payload.likeId)
+                // unlike uses userId as likedId
+                tweet.likes = tweet.likes.filter(like => like.id !== action.payload.userId)
             }
         },
         commentTweet: (state, action) => {
@@ -54,7 +56,16 @@ export const tweetSlice = createSlice({
                 tweet.comments = tweet.comments || []
                 tweet.comments.push(action.payload.comment)
             }
-        }
+        },
+        setComments: (state, action) => {
+            const tweet = state.tweets.find(t => t.id === action.payload.id)
+            if (tweet) {
+                tweet.comments = action.payload.comments
+            }
+        },
+        addTweet: (state, action) => {
+            state.tweets.unshift(action.payload)
+        },
     },
 })
 
@@ -68,6 +79,8 @@ export const {
     likeTweet,
     unlikeTweet,
     commentTweet,
+    setComments,
+    addTweet,
 } = tweetSlice.actions
 
 export default tweetSlice.reducer

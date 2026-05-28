@@ -1,31 +1,42 @@
 import { useEffect, useRef, useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import Grid from '@mui/material/Grid'
-import CircularProgress from '@mui/material/CircularProgress'
+import { Box, CircularProgress } from '@mui/material'
 import Tweet from './Tweet.jsx'
-import {getAllPosts, getPostLikes} from './api.js'
+import { getAllPosts, getPostLikes } from './api.js'
 import { loadAll, loadMore, setLoading, setHasMore } from './store/tweetSlice'
+import SidebarLeft from './SidebarLeft.jsx'
+import SidebarRight from './SidebarRight.jsx'
 
-const PAGE_SIZE = 2
+const PAGE_SIZE = 5
 
-export default function Feed() {
+export default function Feed({ onOpenProfile, onOpenUserProfile }) {
     const dispatch = useDispatch()
     const tweets = useSelector((state) => state.tweet.tweets)
     const page = useSelector((state) => state.tweet.page)
     const hasMore = useSelector((state) => state.tweet.hasMore)
     const isLoading = useSelector((state) => state.tweet.isLoading)
-
+    const usersCache = useSelector((state) => state.user.usersCache)
     const sentinelRef = useRef(null)
 
-    // Initial load
+    const enrichPosts = async (posts) => {
+        const enriched = [];
+        for (const post of posts) {
+            let likes = [];
+            try {
+                likes = await getPostLikes(post.id);
+            } catch (e) {
+                // ignore
+            }
+            enriched.push({ ...post, likes });
+        }
+        return enriched;
+    };
+
     useEffect(() => {
         const load = async () => {
             dispatch(setLoading(true))
             let data = await getAllPosts(0, PAGE_SIZE)
-            for (let i = 0; i < data.length; i++) {
-                const likes = await getPostLikes(data[i].id)
-                data[i] = {...data[i], likes}
-            }
+            data = await enrichPosts(data)
             dispatch(loadAll(data))
             if (data.length < PAGE_SIZE) {
                 dispatch(setHasMore(false))
@@ -40,10 +51,7 @@ export default function Feed() {
         dispatch(setLoading(true))
         const nextPage = page + 1
         let data = await getAllPosts(nextPage, PAGE_SIZE)
-        for (let i = 0; i < data.length; i++) {
-            const likes = await getPostLikes(data[i].id)
-            data[i] = {...data[i], likes}
-        }
+        data = await enrichPosts(data)
         if (data.length > 0) {
             const existingIds = new Set(tweets.map((t) => t.id))
             const allDuplicates = data.every((t) => existingIds.has(t.id))
@@ -59,10 +67,8 @@ export default function Feed() {
         dispatch(setLoading(false))
     }, [dispatch, page, isLoading, tweets])
 
-    // Infinite scroll
     useEffect(() => {
         if (isLoading || !hasMore) return
-
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
@@ -72,26 +78,40 @@ export default function Feed() {
             },
             { rootMargin: '200px' }
         )
-
         if (sentinelRef.current) observer.observe(sentinelRef.current)
         return () => observer.disconnect()
     }, [page, isLoading, hasMore, loadNext])
 
     return (
-        <Grid
-            container
-            rowSpacing={1}
-            columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            sx={{ justifyContent: 'center', alignItems: 'center' }}
-        >
-            {tweets.map((t) => (
-                <Grid item size={8} key={t.id}>
-                    <Tweet tweet={t} />
-                </Grid>
-            ))}
-            <div ref={sentinelRef} style={{ width: '100%', textAlign: 'center', padding: 16 }}>
-                {isLoading && <CircularProgress />}
-            </div>
-        </Grid>
+        <Box sx={{
+            display: 'grid',
+            gridTemplateColumns: '260px 1fr 280px',
+            gap: 3,
+            maxWidth: '1200px',
+            margin: '0 auto',
+            px: 2,
+            py: 3,
+            minHeight: '100vh',
+            '@media (max-width: 1024px)': {
+                gridTemplateColumns: '1fr',
+            },
+        }}>
+            <Box sx={{ '@media (max-width: 1024px)': { display: 'none' } }}>
+                <SidebarLeft onOpenProfile={onOpenProfile} />
+            </Box>
+
+            <Box sx={{ background: 'rgba(255,255,255,0.6)', borderRadius: '20px', px: 2, backdropFilter: 'blur(8px)' }}>
+                {tweets.map((t) => (
+                    <Tweet key={t.id} tweet={t} onOpenUserProfile={onOpenUserProfile} />
+                ))}
+                <Box ref={sentinelRef} sx={{ width: '100%', textAlign: 'center', py: 3 }}>
+                    {isLoading && <CircularProgress size={28} sx={{ color: '#E53935' }} />}
+                </Box>
+            </Box>
+
+            <Box sx={{ '@media (max-width: 1024px)': { display: 'none' } }}>
+                <SidebarRight />
+            </Box>
+        </Box>
     )
 }
