@@ -44,23 +44,39 @@ export async function getCurrentUser() {
 }
 
 // Users
-export async function registerUser({ email, username, password }) {
-    const response = await fetch(`${BASE_URL}/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, password })
-    });
-    if (!response.ok) throw new Error('Registration failed');
-    return await response.json();
-}
-
-export async function getAllUsers() {
-    const response = await fetch(`${BASE_URL}/users`, {
+export async function getAllUsers(username) {
+    const qs = username ? `?username=${encodeURIComponent(username)}` : '';
+    const response = await fetch(`${BASE_URL}/users${qs}`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
     });
     if (!response.ok) throw new Error('Failed to fetch users');
     return await response.json();
+}
+
+export async function searchUsers(username) {
+    return getAllUsers(username);
+}
+
+export async function updateUser(userId, data, profilePic, backgroundPic) {
+    const form = new FormData();
+    const jsonBlob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    form.append('data', jsonBlob);
+    if (profilePic) form.append('profilePic', profilePic);
+    if (backgroundPic) form.append('backgroundPic', backgroundPic);
+
+    const response = await fetch(`${BASE_URL}/users/${userId}`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        },
+        body: form
+    });
+    const respData = await response.json();
+    if (!response.ok) {
+        throw respData;
+    }
+    return respData;
 }
 
 export async function getUser(userId) {
