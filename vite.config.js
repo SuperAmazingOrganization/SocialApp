@@ -8,11 +8,25 @@ export default defineConfig({
     host: '127.0.0.1',
   },
   optimizeDeps: {
-    // Pre-bundling with esbuild hangs on Node 26 — esbuild's
-    // pre-bundler pulls in a Node-API that no longer matches.
-    // Skipping it just means Vite serves deps as raw ESM, which
-    // is slower to first-render but otherwise identical.
-    noDiscovery: true,
-    include: [],
+    // react-redux is shipped as ESM (.mjs) but its dep
+    // use-sync-external-store/with-selector.js is CJS — the browser
+    // cannot load CJS, so the import fails with
+    //   "Importing binding name 'useSyncExternalStoreWithSelector' is not found"
+    // Vite's esbuild pre-bundler normally converts CJS to ESM. We force
+    // just the problem packages through pre-bundling here.
+    include: [
+      'react',
+      'react-dom',
+      'react-dom/client',
+      'react-redux',
+      'react-router',
+      '@reduxjs/toolkit',
+      '@mui/material',
+      '@mui/icons-material',
+      '@emotion/react',
+      '@emotion/styled',
+      'use-sync-external-store',
+      'use-sync-external-store/with-selector',
+    ],
   },
 })
