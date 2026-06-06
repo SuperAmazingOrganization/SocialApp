@@ -75,12 +75,14 @@ export default function SidebarRight() {
                         '& fieldset': { borderColor: 'rgba(0,0,0,0.06)' },
                     },
                 }}
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <SearchIcon sx={{ color: '#888' }} />
-                        </InputAdornment>
-                    ),
+                slotProps={{
+                    input: {
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <SearchIcon sx={{ color: '#888' }} />
+                            </InputAdornment>
+                        ),
+                    },
                 }}
             />
 

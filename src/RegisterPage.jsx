@@ -90,12 +90,14 @@ export default function RegisterPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             sx={inputStyle}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <EmailOutlinedIcon sx={{ color: '#888' }} />
-                                    </InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <EmailOutlinedIcon sx={{ color: '#888' }} />
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
                     </Box>
@@ -109,12 +111,14 @@ export default function RegisterPage() {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             sx={inputStyle}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <PersonOutlinedIcon sx={{ color: '#888' }} />
-                                    </InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <PersonOutlinedIcon sx={{ color: '#888' }} />
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
                     </Box>
@@ -129,12 +133,14 @@ export default function RegisterPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             sx={inputStyle}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <LockOutlinedIcon sx={{ color: '#888' }} />
-                                    </InputAdornment>
-                                ),
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <LockOutlinedIcon sx={{ color: '#888' }} />
+                                        </InputAdornment>
+                                    ),
+                                },
                             }}
                         />
                     </Box>

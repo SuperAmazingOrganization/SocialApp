@@ -139,12 +139,14 @@ export default function Feed({ onOpenProfile, onOpenUserProfile }) {
                         placeholder="Szukaj użytkowników..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon sx={{ color: '#888' }} />
-                                </InputAdornment>
-                            ),
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchIcon sx={{ color: '#888' }} />
+                                    </InputAdornment>
+                                ),
+                            },
                         }}
                         sx={{
                             '& .MuiOutlinedInput-root': {
